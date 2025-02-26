@@ -7,8 +7,8 @@ import authMiddleware from "./Middleware/authMiddleware.js";
 import channelRoutes from "./Routes/channelRoutes.js";
 import commentRoute from "./Routes/commentRoute.js";
 import cookieParser from "cookie-parser";
-
 import dotenv from "dotenv";
+import bodyParser from "body-parser";
 dotenv.config();
 
 const app = express();
@@ -20,6 +20,8 @@ app.use(
     credentials: true,
   })
 );
+app.use(bodyParser.json()); // Ensure JSON parsing
+app.use(bodyParser.urlencoded({ extended: true }));
 
 mongoose.connect(process.env.MONGO_URI);
 

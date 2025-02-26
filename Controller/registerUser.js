@@ -4,8 +4,8 @@ import bcrypt from "bcrypt";
 async function registerUser(req, res) {
   try {
     const { name, email, password } = req.body;
-    const avatar = req.file ? req.file.path : undefined; // Get uploaded image URL from Cloudinary
-
+    const avatar = req.file ? req.file.path : undefined;
+    console.log(req.file);
     const existingUser = await User.findOne({ email });
     if (existingUser)
       return res.status(400).json({ error: "Email already exists" });

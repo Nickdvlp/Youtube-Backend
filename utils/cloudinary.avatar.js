@@ -6,9 +6,9 @@ import dotenv from "dotenv";
 dotenv.config();
 
 cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.API_KEY,
-  api_secret: process.env.API_SECRET,
+  cloud_name: "djsnvplhb",
+  api_key: "776724354627458",
+  api_secret: "_1h9JxW_kcresIgx6F43qSsnSkI",
 });
 
 const storage = new CloudinaryStorage({
