@@ -26,8 +26,8 @@ async function loginUser(req, res) {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Secure only in production
-      sameSite: "Strict",
+      secure: true, // Always secure since Render uses HTTPS
+      sameSite: "None", // Required for cross-origin cookies
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
