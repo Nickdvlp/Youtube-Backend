@@ -9,42 +9,45 @@ import commentRoute from "./Routes/commentRoute.js";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
+
 dotenv.config();
 
 const app = express();
 
-app.use(express.json({ limit: "10mb" }));
+// ✅ Allowed Origins (for local and deployed frontend)
+const allowedOrigins = ["https://mytube0.netlify.app", "http://localhost:5173"];
+
 app.use(
   cors({
-    origin: "https://mytube0.netlify.app",
-    credentials: true,
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, origin);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true, // ✅ Allow cookies
   })
 );
 
-app.options("*", (req, res) => {
-  res.header("Access-Control-Allow-Origin", "http://localhost:5173");
-  res.header("Access-Control-Allow-Origin", "https://mytube0.netlify.app");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.sendStatus(200);
-});
-app.use(bodyParser.json()); // Ensure JSON parsing
+app.use(express.json({ limit: "10mb" }));
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-mongoose.connect(process.env.MONGO_URI);
-
-const db = mongoose.connection;
-
-db.on("open", () => {
-  console.log("db connected");
-});
 app.use(cookieParser());
+
+// ✅ Connect to MongoDB
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("Database connected"))
+  .catch((err) => console.error("Database connection error:", err));
+
 app.use("/api/user", userRoutes);
 app.use("/api/channels", authMiddleware, channelRoutes);
 app.use("/api", authMiddleware, videosRoute);
 app.use("/api/comment", authMiddleware, commentRoute);
 
-app.listen(process.env.PORT, () => {
-  console.log("server is running ");
+// ✅ Start server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
